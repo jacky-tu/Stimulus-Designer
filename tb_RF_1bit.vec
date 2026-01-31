@@ -1,0 +1,27 @@
+
+; ---------- signal definitions ----------
+radix 1 1 1 1 1 1
+vname WE_0 WE CLK D READ_A READ_B
+io i i i i i i
+
+; ---------- timing / electrical settings ----------
+tunit 1ps
+trise 10
+tfall 10
+vih 1.2
+vil 0.0
+voh 1.1
+vol 0.1
+
+; ---------- vector data ----------
+; WE_0 WE CLK D READ_A READ_B
+10000    0    0    0    0    0    0
+20000    0    0    1    0    0    0
+30000    0    1    0    1    0    0
+40000    1    0    1    1    0    0
+50000    0    0    0    0    1    1
+60000    0    0    1    0    0    0
+70000    0    1    0    0    0    0
+80000    1    0    1    0    0    0
+90000    0    0    0    0    1    1
+100000    0    0    1    0    0    0
