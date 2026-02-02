@@ -137,5 +137,10 @@ if __name__ == "__main__":
     input_file_path = sys.argv[1]
     output_file_path = input_file_path.split(".")[0]
     output_file_path = output_file_path + ".vec" if len(sys.argv) == 2 else sys.argv[2]
+
+    if input_file_path == output_file_path:
+        print("[ERROR] Input and output file paths cannot be the same.")
+        sys.exit(1)
+
     generate_vec_file(input_file_path, output_file_path)
     print(f"Vector file successfully generated: {output_file_path}")
