@@ -135,6 +135,7 @@ if __name__ == "__main__":
         sys.exit(1)
     
     input_file_path = sys.argv[1]
-    output_file_path = input_file_path.replace(".vh", ".vec") if len(sys.argv) == 2 else sys.argv[2]
+    output_file_path = input_file_path.split(".")[0]
+    output_file_path = output_file_path + ".vec" if len(sys.argv) == 2 else sys.argv[2]
     generate_vec_file(input_file_path, output_file_path)
     print(f"Vector file successfully generated: {output_file_path}")
