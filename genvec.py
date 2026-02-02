@@ -38,7 +38,7 @@ def generate_header(state_dict):
     radix_parts = []
     vname_parts = []
     io_parts = []
-    header = []
+    header = ["TIME"]
 
     for name, info in state_dict.items():
         bits = info['bits']
@@ -101,7 +101,8 @@ def generate_vector_line(state_dict, time):
             value = variable['value']
         else:
             # Convert binary to hex representation
-            value = bin_to_hex(variable['value'], variable['bits'])
+            value = variable['value'].replace("_", "")
+            value = bin_to_hex(value, variable['bits'])
         vector_parts.append(value)
     
     # Output the vector line as string
@@ -111,21 +112,37 @@ def generate_vector_line(state_dict, time):
 def generate_vec_file(input_file_path, output_file_path):
     state = {}
     time = 0
+
+    # time increments check
+    verilog_time_increments = 0
+    vector_time_increments = 0
+
     with open(input_file_path, "r") as input_file:
         with open(output_file_path, "w") as output_file:
             for line in input_file:
-                var_dict, increment = parse_verilog_line(line, time_factor=1000)
-                
-                for key in var_dict.keys():
-                    state[key] = var_dict[key]
+                # count number of # in a line
+                verilog_time_increments += line.count("#")
 
-                if increment > 0:
-                    # print(f"Time: {time}, {state}")
-                    if time == 0:
-                        output_file.write(generate_header(state) + "\n")
-                    time += increment
-                    # Generate vector line
-                    output_file.write(generate_vector_line(state, time) + "\n")
+                for statement in line.split(";"):
+                    var_dict, increment = parse_verilog_line(statement, time_factor=1000)
+                    
+                    for key in var_dict.keys():
+                        state[key] = var_dict[key]
+
+                    if increment > 0:
+                        # print(f"Time: {time}, {state}")
+                        if time == 0:
+                            output_file.write(generate_header(state) + "\n")
+                        time += increment
+
+                        # Generate vector line
+                        output_file.write(generate_vector_line(state, time) + "\n")
+                        vector_time_increments += 1
+
+    if verilog_time_increments != vector_time_increments:
+        print(f"[WARNING] Mismatch in number of time increments: Verilog file has {verilog_time_increments} but vector file has {vector_time_increments}.")
+    else:
+        print(f"[INFO] Number of time increments match: {verilog_time_increments} increments.")
 
 if __name__ == "__main__":
     # accept input and output file paths from command line arguments
